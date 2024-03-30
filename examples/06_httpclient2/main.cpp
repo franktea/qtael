@@ -14,12 +14,12 @@ int main(int argc, char *argv[]) {
 
     auto b = new qtael::Async([](const qtael::Await & await)->void {
         QNetworkAccessManager nasm;
-        QUrl url("http://www.google.com/");
+        QUrl url("http://www.qq.com/");
         QNetworkRequest request(url);
-        request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+        request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::SameOriginRedirectPolicy);
 
         auto reply = nasm.get(request);
-        qDebug() << "GET http://www.google.com/";
+        qDebug() << "GET http://www.qq.com/";
         // NOTE yield to main event loop until request finished
         auto rv = await(reply, &QNetworkReply::redirected);
         qDebug() << std::get<0>(rv);

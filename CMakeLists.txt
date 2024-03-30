@@ -6,7 +6,7 @@ project(qtael)
 option(BUILD_EXAMPLES "build examples" OFF)
 
 # dependencies
-find_package(Qt5Core 5.6 REQUIRED)
+find_package(Qt6Core 5.6 REQUIRED)
 set(CMAKE_AUTOMOC ON)
 find_package(Boost 1.59 REQUIRED COMPONENTS system context)
 
@@ -24,7 +24,7 @@ target_compile_features(qtael PUBLIC cxx_std_14)
 target_compile_definitions(qtael PUBLIC ${EXTRA_CXX_FLAGS})
 target_compile_definitions(qtael PRIVATE QTAEL_LIBRARY)
 target_include_directories(qtael PRIVATE ${Boost_INCLUDE_DIRS} "${CMAKE_SOURCE_DIR}/include")
-target_link_libraries(qtael ${Boost_LIBRARIES} Qt5::Core)
+target_link_libraries(qtael ${Boost_LIBRARIES} Qt6::Core)
 
 install(TARGETS qtael
         RUNTIME DESTINATION "bin"
@@ -32,6 +32,4 @@ install(TARGETS qtael
         ARCHIVE DESTINATION "lib")
 install(FILES "include/qtael.hpp" DESTINATION "include")
 
-if(BUILD_EXAMPLES)
-    add_subdirectory("examples")
-endif()
+add_subdirectory("examples")

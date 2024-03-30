@@ -1,6 +1,6 @@
 #include "httpserver.hpp"
 
-#include <QtCore/QTextCodec>
+//#include <QTextCodec>
 #include <QtCore/QUrl>
 #include <QtCore/QUrlQuery>
 #include <QtNetwork/QNetworkAccessManager>
@@ -94,10 +94,10 @@ void HttpServer::_onClientReadyRead() {
 
     qtael::Async * task = new qtael::Async([=](const qtael::Await & await)->void {
         // NOTE you can pass `yield` to any function
-        auto data = get(await, "https://www.google.com/");
+        auto data = get(await, "https://www.qq.com/");
 
         QTextStream sio(socket);
-        sio.setCodec(QTextCodec::codecForName("UTF-8"));
+        //sio.setCodec(QTextCodec::codecForName("UTF-8"));
         sendResponse(sio, data);
         socket->close();
     });
