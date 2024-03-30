@@ -4,9 +4,7 @@
 #include <QtCore/QObject>
 #include <QtNetwork/QTcpServer>
 
-
-class HttpServer : public QObject
-{
+class HttpServer : public QObject {
     Q_OBJECT
 public:
     explicit HttpServer(QObject *parent = 0);
@@ -19,7 +17,7 @@ private slots:
     void _onClientDisconnected();
 
 private:
-    QTcpServer * _server;
+    QTcpServer *_server;
 };
 
 #endif // HTTPSERVER_H

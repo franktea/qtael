@@ -7,20 +7,19 @@
 
 #include "qtael.hpp"
 
-
-class JobQueue: public QObject {
+class JobQueue : public QObject {
     Q_OBJECT
 public:
-    JobQueue ();
+    JobQueue();
 
-    qtael::Async * setTimeout (int msIntevel, qtael::Function callback);
+    qtael::Async *setTimeout(int msIntevel, qtael::Function callback);
 
 private slots:
-    void _dequeue ();
-    void _reset ();
+    void _dequeue();
+    void _reset();
 
 private:
-    void _enqueue (qtael::Function callback);
+    void _enqueue(qtael::Function callback);
 
     std::queue<qtael::Function> _queue;
     qtael::Function _currentCallback;

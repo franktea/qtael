@@ -4,13 +4,12 @@
 
 #include "jobqueue.hpp"
 
-
-int main (int argc, char * argv[]) {
+int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
 
     JobQueue jq;
 
-    jq.setTimeout(1000, [&](const qtael::Await & await) -> void {
+    jq.setTimeout(1000, [&](const qtael::Await &await) -> void {
         qDebug() << "A: run callback";
         await(1000);
         qDebug() << "A: first";
@@ -20,7 +19,7 @@ int main (int argc, char * argv[]) {
         qDebug() << "A: third";
     });
 
-    jq.setTimeout(1500, [&](const qtael::Await & await) -> void {
+    jq.setTimeout(1500, [&](const qtael::Await &await) -> void {
         qDebug() << "B: run callback";
         await(1000);
         qDebug() << "B: first";

@@ -9,11 +9,10 @@
 #include "httpserver.hpp"
 #include "qtael.hpp"
 
-
 int main(int argc, char *argv[]) {
     QCoreApplication a(argc, argv);
 
-    auto b = new qtael::Async([](const qtael::Await & await)->void {
+    auto b = new qtael::Async([](const qtael::Await &await) -> void {
         qDebug() << "wait for http server open ...";
         // NOTE yield to main event loop until 1000ms passed
         await(1000);
@@ -27,7 +26,8 @@ int main(int argc, char *argv[]) {
         auto c = reply->readAll();
         qDebug() << c;
     });
-    // NOTE when coroutine finished (i.e. reaches end or return), `finished()` emitted
+    // NOTE when coroutine finished (i.e. reaches end or return), `finished()`
+    // emitted
     b->connect(b, SIGNAL(finished()), SLOT(deleteLater()));
     a.connect(b, SIGNAL(finished()), SLOT(quit()));
     b->start();

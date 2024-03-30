@@ -2,15 +2,10 @@
 
 #include "jobqueue.hpp"
 
+JobQueue::JobQueue() : _currentCallback(nullptr) {}
 
-JobQueue::JobQueue ()
-    : _currentCallback(nullptr)
-{
-}
-
-
-qtael::Async * JobQueue::setTimeout (int msIntevel, qtael::Function callback) {
-    auto job = new qtael::Async([=](const qtael::Await & await)->void {
+qtael::Async *JobQueue::setTimeout(int msIntevel, qtael::Function callback) {
+    auto job = new qtael::Async([=](const qtael::Await &await) -> void {
         await(msIntevel);
 
         this->_enqueue(callback);
@@ -20,13 +15,11 @@ qtael::Async * JobQueue::setTimeout (int msIntevel, qtael::Function callback) {
     return job;
 }
 
-
-void JobQueue::_enqueue (qtael::Function callback) {
+void JobQueue::_enqueue(qtael::Function callback) {
     this->_queue.push(callback);
 }
 
-
-void JobQueue::_dequeue () {
+void JobQueue::_dequeue() {
     if (this->_queue.empty()) {
         qDebug() << "no callback remain, stop chaining";
         return;
@@ -45,7 +38,4 @@ void JobQueue::_dequeue () {
     callback->start();
 }
 
-
-void JobQueue::_reset () {
-    this->_currentCallback = nullptr;
-}
+void JobQueue::_reset() { this->_currentCallback = nullptr; }

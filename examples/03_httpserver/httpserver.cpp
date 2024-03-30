@@ -1,19 +1,18 @@
 #include "httpserver.hpp"
 
-//#include <QTextCodec>
+// #include <QTextCodec>
 #include <QtCore/QUrl>
 #include <QtCore/QUrlQuery>
 #include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QTcpSocket>
 
 #include "qtael.hpp"
 
-
 namespace {
 
-void sendResponse (QTextStream & sio, const QByteArray & data) {
+void sendResponse(QTextStream &sio, const QByteArray &data) {
     auto line = sio.readLine();
     auto parts = line.split(" ");
     auto method = parts[0];
@@ -32,8 +31,7 @@ void sendResponse (QTextStream & sio, const QByteArray & data) {
     sio << data;
 }
 
-
-QByteArray get (const qtael::Await & await, const QString & surl) {
+QByteArray get(const qtael::Await &await, const QString &surl) {
     QNetworkAccessManager nasm;
     QUrl url(surl);
     QNetworkRequest request(url);
@@ -65,46 +63,43 @@ QByteArray get (const qtael::Await & await, const QString & surl) {
     return data;
 }
 
-}
+} // namespace
 
 HttpServer::HttpServer(QObject *parent)
-    : QObject(parent)
-    , _server(new QTcpServer(this))
-{
-    this->connect(this->_server, SIGNAL(newConnection()), SLOT(_onNewConnection()));
+    : QObject(parent), _server(new QTcpServer(this)) {
+    this->connect(this->_server, SIGNAL(newConnection()),
+                  SLOT(_onNewConnection()));
 }
-
 
 bool HttpServer::listen(quint16 port) {
     return this->_server->listen(QHostAddress::LocalHost, port);
 }
 
-
 void HttpServer::_onNewConnection() {
     while (this->_server->hasPendingConnections()) {
         auto socket = this->_server->nextPendingConnection();
         this->connect(socket, SIGNAL(readyRead()), SLOT(_onClientReadyRead()));
-        this->connect(socket, SIGNAL(disconnected()), SLOT(_onClientDisconnected()));
+        this->connect(socket, SIGNAL(disconnected()),
+                      SLOT(_onClientDisconnected()));
     }
 }
-
 
 void HttpServer::_onClientReadyRead() {
     auto socket = qobject_cast<QTcpSocket *>(this->sender());
 
-    qtael::Async * task = new qtael::Async([=](const qtael::Await & await)->void {
-        // NOTE you can pass `yield` to any function
-        auto data = get(await, "https://www.qq.com/");
+    qtael::Async *task =
+        new qtael::Async([=](const qtael::Await &await) -> void {
+            // NOTE you can pass `yield` to any function
+            auto data = get(await, "https://www.qq.com/");
 
-        QTextStream sio(socket);
-        //sio.setCodec(QTextCodec::codecForName("UTF-8"));
-        sendResponse(sio, data);
-        socket->close();
-    });
+            QTextStream sio(socket);
+            // sio.setCodec(QTextCodec::codecForName("UTF-8"));
+            sendResponse(sio, data);
+            socket->close();
+        });
     task->connect(task, SIGNAL(finished()), SLOT(deleteLater()));
     task->start();
 }
-
 
 void HttpServer::_onClientDisconnected() {
     auto socket = qobject_cast<QTcpSocket *>(this->sender());
