@@ -80,8 +80,10 @@ public:
     template <typename T, typename R, typename... Args>
     using SignalType = R (T::*)(Args...);
 
+    // 等待一段时间，相当于协程的sleep
     void operator()(int interval) const;
 
+    // 等待某一个signal的发生
     template <typename T, typename R, typename... Args>
     auto operator()(T *object, SignalType<T, R, Args...> signal_) const {
         detail::SignalIsolator proxy;

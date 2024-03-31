@@ -15,6 +15,7 @@ void Async::start() {
     // 因为是pull_type，所以这个协程会立即执行
     this->d->fork = Coroutine::pull_type{[&](Coroutine::push_type &yield) -> void {
         Await await(std::make_shared<Await::Private>(*this, yield));
+        // 同步调用async构造函数传入的function。
         this->d->task(await);
     }};
 }
