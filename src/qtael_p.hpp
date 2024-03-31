@@ -6,8 +6,6 @@
 namespace qtael {
 
 using Coroutine = boost::coroutines2::coroutine<void>;
-using Receiver = Coroutine::pull_type;
-using Sender = Coroutine::push_type;
 
 class Async::Private : public QObject {
     Q_OBJECT
@@ -22,15 +20,15 @@ public slots:
 
 public:
     Function task;
-    Receiver fork;
+    Coroutine::pull_type fork;
 };
 
 class Await::Private {
 public:
-    Private(Async &context, Sender &yield);
+    Private(Async &context, Coroutine::push_type &yield);
 
     Async &context;
-    Sender &yield;
+    Coroutine::push_type &yield;
 };
 
 } // namespace qtael

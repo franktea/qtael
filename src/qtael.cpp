@@ -12,8 +12,8 @@ Async::Async(Function task, QObject *parent)
 }
 
 void Async::start() {
-    // NOTE the first part will be executed right away
-    this->d->fork = Receiver{[&](Sender &yield) -> void {
+    // 因为是pull_type，所以这个协程会立即执行
+    this->d->fork = Coroutine::pull_type{[&](Coroutine::push_type &yield) -> void {
         Await await(std::make_shared<Await::Private>(*this, yield));
         this->d->task(await);
     }};
@@ -39,7 +39,7 @@ void Await::yield(QObject *isolator) const {
 }
 
 Async::Private::Private(Function task, QObject *parent)
-    : QObject(parent), task(task), fork([](Sender &) -> void {}) {}
+    : QObject(parent), task(task), fork([](Coroutine::push_type &) -> void {}) {}
 
 void Async::Private::onResolve() {
     // NOTE switch back to the remaining part
@@ -50,6 +50,6 @@ void Async::Private::onResolve() {
     }
 }
 
-Await::Private::Private(Async &context, Sender &yield)
+Await::Private::Private(Async &context, Coroutine::push_type &yield)
     : context(context), yield(yield) {}
 
